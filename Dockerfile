@@ -20,5 +20,11 @@ RUN chmod 755 /opt/kafka/bin/kafka-init.sh
 
 ENTRYPOINT /opt/kafka/bin/kafka-init.sh
 
-ENV NET_IF=eth0 NET_PORT=9092
+ENV NET_IF=eth0 \
+    NET_PORT=9092 \
+    KAFKA_HEAP_OPTS='-Xms384M -Xmx384M'
+
 EXPOSE 9092
+
+LABEL description='Single node kafka + zookeeper with default 384Mb heap' \
+      maintainer='edward2a@gmail.com'
