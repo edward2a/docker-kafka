@@ -12,11 +12,22 @@
 # replicamanager DONE
 # sessionexpirelistener DONE
 # zookeeperclientmetrics DONE
+#
+# kafka.controller metric types:
+# ##############################
+# controllerchannelmanager DONE
+# controllerstats DONE
+# kafkacontroller DONE
+
 
 
 lowercaseOutputName: true
 
 rules:
+
+#####################
+# MATCH ALL RULESET #
+#####################
 
 #- pattern: kafka.server<type=(.+), name=(.+)><>([\d]?\w+)
 #  name: kafka_server_$1_$2_$3
@@ -32,6 +43,9 @@ rules:
 
 #- pattern: kafka.server<type=(ReplicaManager), name=(.+)><>([\d]?\w+)
 #  name: kafka_server_$1_$2_$3
+
+#####################
+
 
 # THESE ONES ARE GOOD
 #
@@ -233,3 +247,41 @@ rules:
 #  name: kafka_server_$1_$2_total
 #  type: COUNTER
 #
+
+############################
+# Kafka Controller Metrics #
+############################
+
+# Controller Stats Metrics
+#- pattern: kafka\.controller<type=(ControllerStats), name=(\w+)><>([\d]{2,3})thPercentile
+#  name: kafka_controller_$1_$2
+#  labels:
+#    metric: quantile|0.$3
+#    quantile: 0.$3
+#  type: GAUGE
+#
+#- pattern: kafka\.controller<type=(ControllerStats), name=(\w+)><>(Max|Min|Mean|StdDev|OneMinuteRate|FiveMinuteRate|FifteenMinuteRate)
+#  name: kafka_controller_$1_$2
+#  labels:
+#    metric: $3
+#  type: GAUGE
+#
+#- pattern: kafka\.controller<type=(ControllerStats), name=(\w+)><>Count
+#  name: kafka_controller_$1_$2_total
+#  type: COUNTER
+#
+# Kafka Controller Metrics
+#- pattern: kafka\.controller<type=(KafkaController), name=(\w+)><>Value
+#  name: kafka_controller_$1_$2
+#  type: GAUGE
+#
+# Controller Channel Manager Metrics
+#- pattern: kafka\.controller<type=(ControllerChannelManager), name=(\w+)><>Value
+#  name: kafka_controller_$1_$2
+#  type: GAUGE
+#
+#- pattern: kafka\.controller<type=(ControllerChannelManager), name=([\w-]+), broker-id=(\d+)><>Value
+#  name: kafka_controller_$1_$2
+#  labels:
+#    broker_id: $3
+#  type: GAUGE
