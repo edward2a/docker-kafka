@@ -285,3 +285,20 @@ rules:
 #  labels:
 #    broker_id: $3
 #  type: GAUGE
+#
+
+#######################
+# Kafka Utils Metrics #
+#######################
+
+# Throttler Metrics
+#- pattern: kafka\.utils<type=(Throttler), name=([\w-]+)><>Count
+#  name: kafka_utils_$1_$2_total
+#  type: COUNTER
+#
+#- pattern: kafka\.utils<type=(Throttler), name=([\w-]+)><>(MeanRate|OneMinuteRate|FiveMinuteRate|FifteenMinuteRate)
+#  name: kafka_utils_$1_$2
+#  labels:
+#    metric: $3
+#  type: GAUGE
+#
