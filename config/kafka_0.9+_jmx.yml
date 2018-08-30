@@ -1,0 +1,200 @@
+---
+
+# kafka.server metric types:
+# ##########################
+# brokertopicmetrics
+# delayedoperationpurgatory
+# fetchsessioncache DONE
+# kafkarequesthandlerpool DONE
+# kafkaserver
+# replicaalterlogdirsmanager DONE
+# replicafetchermanager DONE
+# replicamanager DONE
+# sessionexpirelistener DONE
+# zookeeperclientmetrics DONE
+
+
+lowercaseOutputName: true
+
+rules:
+
+#- pattern: kafka.server<type=(.+), name=(.+)><>([\d]?\w+)
+#  name: kafka_server_$1_$2_$3
+
+#- pattern: kafka.controller<type=(.+), name=(.+)><>([\d]?\w+)
+#  name: kafka_controller_$1_$2_$3
+
+#- pattern: kafka.cluster<type=(.+), name=(.+)><>([\d]?\w+)
+#  name: kafka_cluster_$1_$2_$3
+
+#- pattern: kafka.utils<type=(.+), name=(.+)><>([\d]?\w+)
+#  name: kafka_utils_$1_$2_$3
+
+#- pattern: kafka.server<type=(ReplicaManager), name=(.+)><>([\d]?\w+)
+#  name: kafka_server_$1_$2_$3
+
+
+# THESE ONES ARE GOOD
+#
+#- pattern: kafka.cluster<type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)><>([\d]?\w+)
+#  name: kafka_cluster_$1_$2_$7
+#  labels:
+#    "$3": "$4"
+#    "$5": "$6"
+
+#- pattern: kafka.network<type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)><>([\d]?\w+)
+#  name: kafka_network_$1_$1_$7
+#  labels:
+#    "$3": "$4"
+#    "$5": "$6"
+#
+#- pattern: kafka.network<type=(.+), name=(.+), (.+)=(.+)><>([\d]?\w+)
+#  name: kafka_network_$1_$2_$5
+#  labels:
+#    "$3": "$4"
+#
+#- pattern: kafka.server<type=(.+), name=(.+), (.+)=(.+)><>([\d]?\w+)
+#  name: kafka_server_$1_$2_$5
+#  labels:
+#    "$3": "$4"
+#
+#- pattern: kafka.controller<type=(.+), name=(.+), (.+)=(.+)><>([\d]?\w+)
+#  name: kafka_controller_$1_$2_$5
+#  labels:
+#    "$3": "$4"
+#
+
+
+# CATCH ALL
+#- pattern: kafka.server<type=(.+), name=(.+)><>([\d]?\w+)
+#  name: kafka_server_$1_$2_$3
+#
+#- pattern: kafka.network<type=(.+), name=(.+)><>([\d]?\w+)
+#  name: kafka_network_$1_$2_$3
+#
+#- pattern: kafka.controller<type=(.+), name=(.+)><>([\d]?\w+)
+#  name: kafka_controller_$1_$2_$3
+#
+#- pattern: kafka.cluster<type=(.+), name=(.+)><>([\d]?\w+)
+#  name: kafka_cluster_$1_$2_$3
+#
+#- pattern: kafka.utils<type=(.+), name=(.+)><>([\d]?\w+)
+#  name: kafka_utils_$1_$2_$3
+#
+
+
+
+
+
+#############################
+### Kafka Network Metrics ###
+#############################
+
+# Request Metrics Histogram
+#- pattern: kafka\.network<type=(\w+), name=(\w+), request=(\w+)><>([\d]{2,3})thPercentile
+#  name: kafka_network_$1_$2_$3
+#  labels:
+#    metric: quantile|0.$4
+#    quantile: 0.$4
+#  type: GAUGE
+#
+# Request Metrics Count
+#- pattern: kafka\.network<type=(\w+), name=(\w+), request=(\w+)><>(Count)
+#  name: kafka_network_$1_$2_$3_total
+#  type: COUNTER
+#
+# Request Metrics Gauges
+#- pattern: kafka\.network<type=(\w+), name=(\w+), request=(\w+)><>(Max|Min|Mean|StdDev|OneMinuteRate|FiveMinuteRate|FifteenMinuteRate)
+#  name: kafka_network_$1_$2_$3
+#  type: GAUGE
+#  labels:
+#    metric: "$4"
+
+############################
+### Kafka Server Metrics ###
+############################
+
+# Request Handler Pool
+#- pattern: kafka.server<type=(KafkaRequestHandlerPool), name=(\w+)><>Count
+#  name: kafka_server_$1_$2_total
+#  type: COUNTER
+#
+#- pattern: kafka.server<type=(KafkaRequestHandlerPool), name=(\w+)><>(MeanRate|OneMinuteRate|FiveMinuteRate|FifteenMinuteRate)
+#  name: kafka_server_$1_$2
+#  type: GAUGE
+#  labels:
+#    metric: $3
+#
+# Replica Manager
+#- pattern: kafka.server<type=(ReplicaManager), name=(\w+)><>Count
+#  name: kafka_server_$1_$2_total
+#  type: COUNTER
+#
+#- pattern: kafka.server<type=(ReplicaManager), name=(\w+)><>Value
+#  name: kafka_server_$1_$2
+#  type: GAUGE
+#
+#- pattern: kafka.server<type=(ReplicaManager), name=(\w+)><>(MeanRate|OneMinuteRate|FiveMinuteRate|FifteenMinuteRate)
+#  name: kafka_server_$1_$2
+#  type: GAUGE
+#  labels:
+#    metric: $3
+#
+# Replica Fetcher Manager
+#- pattern: kafka.server<type=(ReplicaFetcherManager), name=(\w+), clientId=(\w+)><>Value
+#  name: kafka_server_$1_$2
+#  type: GAUGE
+#  labels:
+#    clientid: "$3"
+#
+# Replica Alter Log Dirs Manager
+#- pattern: kafka.server<type=(ReplicaAlterLogDirsManager), name=(\w+), clientId=(\w+)><>Value
+#  name: kafka_server_$1_$2
+#  type: GAUGE
+#  labels:
+#    clientid: "$3"
+#
+# Fetch Session Cache
+#- pattern: kafka.server<type=(FetchSessionCache), name=(\w+)><>Count
+#  name: kafka_server_$1_$2_total
+#  type: COUNTER
+#
+#- pattern: kafka.server<type=(FetchSessionCache), name=(\w+)><>Value
+#  name: kafka_server_$1_$2
+#  type: GAUGE
+#
+#- pattern: kafka.server<type=(FetchSessionCache), name=(\w+)><>(MeanRate|OneMinuteRate|FiveMinuteRate|FifteenMinuteRate)
+#  name: kafka_server_$1_$2
+#  type: GAUGE
+#  labels:
+#    metric: $3
+#
+# Session Expire Listener
+#- pattern: kafka.server<type=(SessionExpireListener), name=(\w+)><>Count
+#  name: kafka_server_$1_$2_total
+#  type: COUNTER
+#
+#- pattern: kafka.server<type=(SessionExpireListener), name=(\w+)><>(MeanRate|OneMinuteRate|FiveMinuteRate|FifteenMinuteRate)
+#  name: kafka_server_$1_$2
+#  type: GAUGE
+#  labels:
+#    metric: $3
+#
+# ZooKeeper Client Metrics
+#- pattern: kafka.server<type=(ZooKeeperClientMetrics), name=(\w+)><>Count
+#  name: kafka_server_$1_$2_total
+#  type: COUNTER
+#
+#- pattern: kafka.server<type=(ZooKeeperClientMetrics), name=(\w+)><>([\d]{2,3})thPercentile
+#  name: kafka_network_$1_$2
+#  labels:
+#    metric: quantile|0.$3
+#    quantile: 0.$3
+#  type: GAUGE
+#
+#- pattern: kafka.server<type=(ZooKeeperClientMetrics), name=(\w+)><>(Max|Min|Mean|StdDev|OneMinuteRate|FiveMinuteRate|FifteenMinuteRate)
+#  name: kafka_network_$1_$2
+#  type: GAUGE
+#  labels:
+#    metric: "$3"
+#
