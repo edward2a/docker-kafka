@@ -46,7 +46,6 @@ rules:
 
 #####################
 
-
 # THESE ONES ARE GOOD
 #
 #- pattern: kafka.cluster<type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)><>([\d]?\w+)
@@ -302,3 +301,15 @@ rules:
 #    metric: $3
 #  type: GAUGE
 #
+
+#########################
+# Kafka Cluster Metrics #
+#########################
+
+# Partition Metrics
+#- pattern: kafka\.cluster<type=(Partition), name=(\w+), topic=(.+), partition=(\d+)><>Value
+#  name: kafka_cluster_$1_$2
+#  labels:
+#    topic: $3
+#    partition: $4
+
