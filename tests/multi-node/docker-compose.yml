@@ -1,0 +1,129 @@
+---
+version: '3.6'
+
+networks:
+  public: {}
+  replication: {}
+
+services:
+
+  zk1:
+    container_name: zk1
+    image: zookeeper
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      public: {}
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888 server.2=zk2:2888:3888 server.3=zk3:2888:3888
+
+  zk2:
+    container_name: zk2
+    image: zookeeper
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      public: {}
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zk1:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zk3:2888:3888
+
+  zk3:
+    container_name: zk3
+    image: zookeeper
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      public: {}
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zk1:2888:3888 server.2=zk2:2888:3888 server.3=0.0.0.0:2888:3888
+
+  kafka1:
+    depends_on:
+    - zk1
+    - zk2
+    - zk3
+    container_name: kafka1
+    image: edward2a/kafka-cluster-node
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      public: {}
+      replication: {}
+    environment:
+      ZK_CLUSTER: zk1:2181,zk2:2181,zk3:2181
+      PUBLIC_IF: eth0
+      REPLICATION_IF: eth1
+      BROKER_ID: 1
+      KAFKA_HEAP_OPTS: -Xms256M -Xmx256M
+
+  kafka2:
+    depends_on:
+    - zk1
+    - zk2
+    - zk3
+    container_name: kafka2
+    image: edward2a/kafka-cluster-node
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      public: {}
+      replication: {}
+    environment:
+      ZK_CLUSTER: zk1:2181,zk2:2181,zk3:2181
+      PUBLIC_IF: eth0
+      REPLICATION_IF: eth1
+      BROKER_ID: 2
+      KAFKA_HEAP_OPTS: -Xms256M -Xmx256M
+
+  kafka3:
+    depends_on:
+    - zk1
+    - zk2
+    - zk3
+    container_name: kafka3
+    image: edward2a/kafka-cluster-node
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      public: {}
+      replication: {}
+    environment:
+      ZK_CLUSTER: zk1:2181,zk2:2181,zk3:2181
+      PUBLIC_IF: eth0
+      REPLICATION_IF: eth1
+      BROKER_ID: 3
+      KAFKA_HEAP_OPTS: -Xms256M -Xmx256M
+
+  kafkalb:
+    depends_on:
+    - kafka1
+    - kafka2
+    - kafka3
+    container_name: kafkalb
+    image: haproxy:1.8-alpine
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      public: {}
+    volumes:
+    - ./config/kafkalb.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+    - 127.0.0.1:9092:9092
+...
