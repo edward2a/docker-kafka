@@ -5,19 +5,23 @@ FROM alpine:3.7
 # Kafka/JMX config file sourced from:
 # https://raw.githubusercontent.com/prometheus/jmx_exporter/ad3b4f97017790fbb0883bc8e8a6733a2c654f15/example_configs/kafka-2_0_0.yml
 
+ARG KAFKA_VERSION=2.0.0
+ARG SCALA_VERSION=2.11
+ARG JMX_EXP_VERSION=0.10
+
 RUN apk update && \
     apk add openjdk8-jre-base bash pcre-tools
 
 RUN addgroup -S kafka && \
     adduser -S -D -G kafka kafka
 
-RUN wget http://mirrors.whoishostingthis.com/apache/kafka/1.1.0/kafka_2.11-1.1.0.tgz && \
+RUN wget http://mirrors.whoishostingthis.com/apache/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz && \
     mkdir /opt && \
-    tar -xf kafka_2.11-1.1.0.tgz -C /opt && \
-    ln -s /opt/kafka_2.11-1.1.0 /opt/kafka && \
+    tar -xf kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz -C /opt && \
+    ln -s /opt/kafka_${SCALA_VERSION}-${KAFKA_VERSION} /opt/kafka && \
     mkdir /opt/kafka/data_kafka /opt/kafka/data_zookeeper
 
-RUN wget -O /opt/kafka/libs/jmx_prometheus_javaagent.jar http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.10/jmx_prometheus_javaagent-0.10.jar
+RUN wget -O /opt/kafka/libs/jmx_prometheus_javaagent.jar http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXP_VERSION}/jmx_prometheus_javaagent-${JMX_EXP_VERSION}.jar
 
 ADD config/zookeeper-single_node.properties /opt/kafka/config/zookeeper.properties
 ADD config/server-single_node.properties /opt/kafka/config/server.properties
