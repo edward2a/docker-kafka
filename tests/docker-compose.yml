@@ -1,0 +1,38 @@
+---
+version: '3.6'
+
+services:
+
+  kafka:
+    container_name: kafka
+    image: edward2a/kafka:2.0.0-single_node
+    build: ../
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    environment: {}
+    volumes:
+    - ../config/kafka_0.9+_jmx.yml:/opt/kafka/config/kafka_jmx.yml:ro
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    environment: {}
+    volumes:
+    - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    environment: {}
+    volumes:
+    - ./config/grafana:/etc/grafana
