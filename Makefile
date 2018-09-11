@@ -1,10 +1,11 @@
 # TEMPORARY VARIABLES
 DOCKER_REPOSITORY ?= edward2a/kafka
-DOCKER_TAG ?= 2.0.0-single_node
+DOCKER_TAG ?= 2.0.0
 
 .PHONY: build-deps build publish
 
-build-deps:
+help:
+	@echo "This is just a help line"
 
 build:
 	docker build -t ${DOCKER_REPOSITORY}:${DOCKER_TAG} .

@@ -1,0 +1,16 @@
+global:
+  scrape_interval:     6s
+  evaluation_interval: 6s
+
+rule_files:
+  # - "first.rules"
+  # - "second.rules"
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: kafka_jmx
+    static_configs:
+      - targets: ['kafka1:9045', 'kafka2:9045', 'kafka3:9045']
+

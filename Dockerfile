@@ -19,29 +19,35 @@ RUN wget http://mirrors.whoishostingthis.com/apache/kafka/${KAFKA_VERSION}/kafka
     mkdir /opt && \
     tar -xf kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz -C /opt && \
     ln -s /opt/kafka_${SCALA_VERSION}-${KAFKA_VERSION} /opt/kafka && \
-    mkdir /opt/kafka/data_kafka /opt/kafka/data_zookeeper
+    mkdir /opt/kafka/data_kafka /opt/kafka/data_zookeeper && \
+    rm -f kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz
 
 RUN wget -O /opt/kafka/libs/jmx_prometheus_javaagent.jar http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXP_VERSION}/jmx_prometheus_javaagent-${JMX_EXP_VERSION}.jar
 
 ADD config/zookeeper-single_node.properties /opt/kafka/config/zookeeper.properties
-ADD config/server-single_node.properties /opt/kafka/config/server.properties
-ADD config/kafka_jmx.yml /opt/kafka/config/kafka_jmx.yml
+ADD config/server-single_node.properties /opt/kafka/config/server-single.properties
+ADD config/server-cluster_node.properties /opt/kafka/config/server-cluster.properties
+ADD config/kafka_0.9+_jmx.yml /opt/kafka/config/kafka_jmx.yml
 ADD scripts/container_init.sh /opt/kafka/bin/kafka-init.sh
 
 RUN chmod 755 /opt/kafka/bin/kafka-init.sh
 
 ENTRYPOINT /opt/kafka/bin/kafka-init.sh
 
-ENV NET_IF=eth0 \
-    NET_PORT=9092 \
+ENV PUBLIC_IF=eth0 \
+    PUBLIC_PORT=9092 \
+    REPLICATION_IF=eth0 \
+    REPLICATION_PORT=9093 \
     KAFKA_HEAP_OPTS='-Xms384M -Xmx384M' \
     KAFKA_JMX_ENABLE=1 \
     KAFKA_JMX_IF=eth0 \
-    KAFKA_JMX_PORT=9045
+    KAFKA_JMX_PORT=9045 \
+    CLUSTER_NODE=0 \
+    ZK_CLUSTER=127.0.0.1
 
-EXPOSE 9092
+EXPOSE 9092/tcp 9093/tcp
 
-LABEL description='Single node kafka + zookeeper with default 384Mb heap' \
+LABEL description='Kafka node (cluster / single w/zookeeper), default 384MiB heap' \
       maintainer='edward2a@gmail.com'
 
-VOLUME ["/opt/kafka/data_kafka", "/opt/kafka/data_zookeeper"]
+VOLUME ["/opt/kafka/data_kafka"]

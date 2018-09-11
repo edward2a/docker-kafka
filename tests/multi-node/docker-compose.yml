@@ -52,7 +52,7 @@ services:
     - zk2
     - zk3
     container_name: kafka1
-    image: edward2a/kafka-cluster-node
+    image: edward2a/kafka
     logging:
       driver: json-file
       options:
@@ -66,6 +66,7 @@ services:
       REPLICATION_IF: eth1
       BROKER_ID: 1
       KAFKA_HEAP_OPTS: -Xms256M -Xmx256M
+      CLUSTER_NODE: 1
 
   kafka2:
     depends_on:
@@ -73,7 +74,7 @@ services:
     - zk2
     - zk3
     container_name: kafka2
-    image: edward2a/kafka-cluster-node
+    image: edward2a/kafka
     logging:
       driver: json-file
       options:
@@ -87,6 +88,7 @@ services:
       REPLICATION_IF: eth1
       BROKER_ID: 2
       KAFKA_HEAP_OPTS: -Xms256M -Xmx256M
+      CLUSTER_NODE: 1
 
   kafka3:
     depends_on:
@@ -94,7 +96,7 @@ services:
     - zk2
     - zk3
     container_name: kafka3
-    image: edward2a/kafka-cluster-node
+    image: edward2a/kafka
     logging:
       driver: json-file
       options:
@@ -108,6 +110,7 @@ services:
       REPLICATION_IF: eth1
       BROKER_ID: 3
       KAFKA_HEAP_OPTS: -Xms256M -Xmx256M
+      CLUSTER_NODE: 1
 
   kafkalb:
     depends_on:
@@ -126,4 +129,31 @@ services:
     - ./config/kafkalb.cfg:/usr/local/etc/haproxy/haproxy.cfg
     ports:
     - 127.0.0.1:9092:9092
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      public: {}
+    environment: {}
+    volumes:
+    - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      public: {}
+    environment: {}
+    volumes:
+    - ../config/grafana:/etc/grafana
+
 ...
