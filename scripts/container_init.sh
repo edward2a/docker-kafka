@@ -37,8 +37,8 @@ function configure_kafka_single(){
     NET_ADDR=$(get_if_ip ${PUBLIC_IF})
     sed -i -e "s|^host\.name=.*$|host.name=${NET_ADDR}|" ${KFK_CONFIG}
     sed -i -e "s|^advertised\.host\.name=.*$|advertised.host.name=${NET_ADDR}|" ${KFK_CONFIG}
-    sed -i -e "s|^listeners=.*$|listeners=PLAINTEXT://${NET_ADDR}:${NET_PORT}|" ${KFK_CONFIG}
-    sed -i -e "s|^advertised.listeners=.*$|advertised.listeners=PLAINTEXT://${NET_ADDR}:${NET_PORT}|" ${KFK_CONFIG}
+    sed -i -e "s|^listeners=.*$|listeners=PLAINTEXT://${NET_ADDR}:${PUBLIC_PORT}|" ${KFK_CONFIG}
+    sed -i -e "s|^advertised.listeners=.*$|advertised.listeners=PLAINTEXT://${NET_ADDR}:${PUBLIC_PORT}|" ${KFK_CONFIG}
 
     # TODO: could this be an address different than kafka?
     if [ ${KAFKA_JMX_ENABLE} == 1 ]; then
