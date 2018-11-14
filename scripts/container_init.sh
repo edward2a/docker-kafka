@@ -89,9 +89,9 @@ function start_kafka(){
 }
 
 function stop_kafka(){
-    kill $KFK_PID
+    kill -s TERM $KFK_PID
     if [ ${CLUSTER_NODE} == 0 ]; then
-        sleep 5
+        sleep 10
         kill $ZOO_PID
     fi
 }
